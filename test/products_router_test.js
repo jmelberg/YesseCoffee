@@ -25,9 +25,41 @@ describe('Product Routes', function() {
         done();
       });
     });
-    
   });
 
+  it('POST /products should create a product with passed json attributes', function(done) {
+    request(app).post("/products").send({name:"Jet Fuel Coffee"}).expect(200, function(err, res) {
+      res.body.should.include({name:"Jet Fuel Coffee"});
+      res.body.should.have.property("_id");
+      done();
+    });
+  });
+
+  it('PUT /product/:id should update a product with id :id', function(done) {
+    product = new Product({name: 'black coffee'});
+    product.save(function(err, prod) {
+      productId = prod._id;
+      request(app).put('/products/' + productId).send({name: 'new name'}).expect(200, function(err, res) {
+        res.body.name.should.eql('new name');
+        done();
+      });
+    });
+    // body...
+  });
+
+  it('/DELETE /products/:id should delete product with id', function(done) {
+    product = new Product({name: 'black coffee'});
+    product.save(function(err, prod) {
+      productId = prod._id;
+      request(app).delete('/products/' + productId).expect(200, function(err, res) {
+        res.body.message.should.eql("Product with ID " + productId + " was deleted");
+        done();
+      });
+    });
+
+
+    // body...
+  })
 
 });
 
